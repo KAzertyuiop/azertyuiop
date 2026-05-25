@@ -233,14 +233,16 @@ function initKeyboardIntro() {
   if (!window.gsap || window.__keyboardIntroInitialized) return;
 
   const keys = Array.from(document.querySelectorAll(".azerty .key"));
-  const contactValue = document.querySelector(".contact-value");
+  const contactDomain = document.querySelector(".contact-domain");
+  const page = document.documentElement;
   if (keys.length < 2) return;
 
   window.__keyboardIntroInitialized = true;
+  page.classList.remove("intro-complete");
 
   const sweepKeys = keys.slice(1);
-  if (contactValue) {
-    contactValue.textContent = "koen@a.be";
+  if (contactDomain) {
+    contactDomain.textContent = "a";
   }
   gsap.set(sweepKeys, {
     autoAlpha: 0,
@@ -260,13 +262,17 @@ function initKeyboardIntro() {
           if (letter && KEY_FLASHABLE.has(letter)) {
             flashKeyForSelector(`.key-${letter} .key-letter`);
           }
-          if (contactValue && EMAIL_SWEEP_SUFFIX[index]) {
-            contactValue.textContent = `koen@a${EMAIL_SWEEP_SUFFIX.slice(0, index + 1).join("")}.be`;
+          if (contactDomain && EMAIL_SWEEP_SUFFIX[index]) {
+            contactDomain.textContent = `a${EMAIL_SWEEP_SUFFIX.slice(0, index + 1).join("")}`;
           }
         },
       },
       index === 0 ? 0 : `+=${KEY_INTRO_STAGGER}`
     );
+  });
+
+  tl.to({}, { duration: 1 }).call(() => {
+    page.classList.add("intro-complete");
   });
 
   window.__keyboardIntroTL = tl;
