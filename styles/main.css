@@ -1,58 +1,448 @@
 :root {
-  color-scheme: light;
-  --bg: #f2efe8;
-  --text: #181818;
-  --muted: #5e5a55;
-  --accent: #165d4d;
+  color-scheme: dark;
+  --bg: #000;
+  --panel: #050505;
+  --text: #fff;
+  --muted: #9f9f9f;
+  --border: rgba(255, 255, 255, 0.78);
+  --key: #f6f6f6;
+  --key-text: #111;
+  --key-muted: #bababa;
+  --key-pressed: #a8a8a8;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(22, 93, 77, 0.08), transparent 32rem),
-    linear-gradient(180deg, #f7f3ec 0%, var(--bg) 100%);
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg);
   color: var(--text);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .page {
+  width: 100%;
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 3rem 1.5rem;
+  min-height: 100svh;
 }
 
 .hero {
-  max-width: 48rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 0;
 }
 
-.eyebrow {
-  margin: 0 0 1rem;
-  color: var(--accent);
-  font-family: Arial, sans-serif;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+.scribble {
+  position: relative;
+  z-index: 3;
+  width: 100px;
+  margin-top: 0.5rem;
+  margin-bottom: 34px;
+  color: #fff;
+}
+
+.scribble svg {
+  display: block;
+  overflow: visible;
+}
+
+.scribble-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+}
+
+.keyboard-stage {
+  width: min(1290px, 100%);
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 36px 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.azerty {
+  width: 870px;
+  max-width: calc(100% - 7rem);
+  display: flex;
+  gap: 10px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.key {
+  width: 78px;
+  height: 78px;
+  flex: 0 0 78px;
+  border-radius: 6px;
+  background: var(--key);
+  color: var(--key-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-family: "Roboto", sans-serif;
+  transition: background-color 0.08s linear;
+}
+
+.key-muted {
+  background: var(--key-muted);
+}
+
+.key.is-pressed {
+  background: var(--key-pressed);
+}
+
+.key-a {
+  overflow: visible;
+}
+
+.bg-keyboard,
+.bg-keyboard-mask {
+  z-index: -1000;
+  pointer-events: none;
+  position: absolute;
+}
+
+.bg-keyboard {
+  object-fit: none;
+}
+
+.bg-keyboard-desktop {
+  width: 1398px;
+  max-width: none;
+  height: 518px;
+  inset: -176px auto auto -264px;
+}
+
+.bg-keyboard-mask.bg-keyboard-desktop {
+  width: 1398px;
+  height: 1382px;
+  inset: -610px auto auto -264px;
+  background-image: radial-gradient(circle farthest-side, rgba(0, 0, 0, 0.8), #000);
+  transform: scale3d(1, 0.4, 1);
+  transform-style: preserve-3d;
+}
+
+.bg-keyboard-mobile {
+  display: none;
+}
+
+.key-letter {
+  margin-right: 20px;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
-h1 {
-  margin: 0;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  line-height: 0.95;
+.key-number {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  color: #9a9a9a;
+  font-size: 10px;
+  font-weight: 300;
+  display: none;
+  line-height: 1;
 }
 
-.intro {
-  margin: 1.5rem auto 0;
-  max-width: 36rem;
+.info-card {
+  width: min(340px, calc(100% - 8rem));
+  margin: clamp(1.75rem, 4.5vh, 3rem) auto 0;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.info-pair-role {
+  margin-bottom: 20px;
+}
+
+.label {
   color: var(--muted);
-  font-family: Arial, sans-serif;
-  font-size: 1.05rem;
-  line-height: 1.6;
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.role-box {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #fff;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 4px 11px;
+}
+
+.role-text {
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: 400;
+  white-space: nowrap;
+  display: inline;
+}
+
+.role-caret {
+  font-size: 30px;
+  font-weight: 100;
+  display: inline-block;
+  width: 0;
+  visibility: hidden;
+  animation: blink 1s steps(1) infinite;
+  overflow: visible;
+  vertical-align: baseline;
+}
+
+.role-caret.is-active {
+  visibility: visible;
+}
+
+.space {
+  display: inline;
+  white-space: pre;
+}
+
+.u1-u, .u2-x, .space {
+  display: inline;
+}
+
+.d1-d, .d2-e, .d3-s, .d4-i, .d5-g, .d6-n, .d7-e, .d8-r {
+  display: none;
+}
+
+.r1-r.r-res, .r2-e.r-res, .r3-s.r-res, .r4-e.r-res, .r5-a, .r6-r, .r7-c, .r8-h, .r9-e, .r10-r {
+  display: none;
+}
+
+.r-res {
+  display: inline;
+}
+
+.s1-s, .s2_e, .s3-r, .s4-v, .s5-i, .s6-c, .s7-e, .i1-i, .i2-n, .i3-f, .i4-o, .i5-r, .i6-m, .i7-a, .i8-t, .i9-i, .i10-o, .i11-n, .proxy1-p, .proxy2-r, .proxy3-o, .proxy4-x, .proxy5-y, .proxy-space, .p1-p, .p2-r, .p3-o, .p4-d, .p5-u, .p6-c, .p7-t, .o1-o, .o2-w, .o3-n, .o4-e, .o5-r, .ba-b1-b, .ba-b2-u, .ba-b3-s, .ba-b4-i, .ba-b5-n, .ba-b6-e, .ba-b7-s, .ba-b8-s, .ba-a1-a, .ba-a2-n, .ba-a3-a, .ba-a4-l, .ba-a5-y, .ba-a6-s, .ba-a7-t {
+  display: none;
+}
+
+.a-a.a1-a, .a-a.a2-r, .a-a.a3-c, .a-a.a4-h, .a-a.a5-i, .a-a.a6-t, .a-a.a7-e, .a-a.a8-c, .a-a.a9-t, .u-u.u1-u, .u-u.u2-x {
+  display: inline;
+}
+
+.statement,
+.value,
+.contact-value {
+  margin: 0;
+  line-height: 34px;
+}
+
+.statement {
+  max-width: 340px;
+  font-size: 26px;
+  font-weight: 400;
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.statement span {
+  display: block;
+}
+
+.value {
+  font-size: 26px;
+  font-family: "Roboto", sans-serif;
+}
+
+.contact-value {
+  font-size: 26px;
+  font-weight: 400;
+  font-family: "Roboto", sans-serif;
+}
+
+.button {
+  display: inline-flex;
+  margin-top: 28px;
+  min-width: 111px;
+  height: 48px;
+  padding: 0 21px;
+  border-radius: 4px;
+  background: #fff;
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes blink {
+  0%,
+  49%,
+  100% {
+    opacity: 1;
+  }
+
+  50%,
+  99% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 991px) {
+  .hero {
+    padding: 0;
+  }
+
+  .scribble {
+    position: relative;
+    z-index: 3;
+    width: 80px;
+    margin-top: 16px;
+    margin-bottom: 28px;
+  }
+
+  .keyboard-stage {
+    width: 100%;
+    min-height: auto;
+    margin-top: 0;
+    padding: 1rem 0 2.5rem;
+  }
+
+  .azerty {
+    width: min(354px, calc(100vw - 20px));
+    max-width: none;
+    gap: 6px;
+    margin-top: 0;
+  }
+
+  .key {
+    width: 30px;
+    height: 42px;
+    flex: 0 0 30px;
+    border-radius: 6px;
+  }
+
+  .key-letter {
+    margin-right: 0;
+    margin-bottom: 0;
+    align-self: center;
+    font-size: 22px;
+    text-transform: lowercase;
+  }
+
+  .bg-keyboard-desktop,
+  .bg-keyboard-mask.bg-keyboard-desktop {
+    display: none;
+  }
+
+  .bg-keyboard.bg-keyboard-mobile {
+    display: block;
+    width: 354px;
+    max-width: none;
+    height: 192px;
+    inset: 0 auto auto 0;
+  }
+
+  .bg-keyboard-mask.bg-keyboard-mobile {
+    display: block;
+    width: 374px;
+    height: 1000px;
+    inset: -500px auto auto -10px;
+    background-image: radial-gradient(circle farthest-side, rgba(0, 0, 0, 0.8), #000);
+    transform: scale3d(1, 0.4, 1);
+    transform-style: preserve-3d;
+  }
+
+  .key-number {
+    display: block;
+  }
+
+  .info-card {
+    width: 300px;
+    margin-top: 2rem;
+  }
+
+  .label {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .role-box {
+    min-height: 46px;
+    padding: 4px 11px;
+  }
+
+  .role-text {
+    font-size: 24px;
+    line-height: 32px;
+    white-space: normal;
+  }
+
+  .caret {
+    height: 2.2rem;
+    align-self: center;
+  }
+
+  .statement {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .value {
+    font-size: 24px;
+  }
+
+  .contact-value {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .button {
+    margin-top: 28px;
+  }
+}
+
+@media (max-width: 479px) {
+  .azerty {
+    width: min(354px, calc(100vw - 20px));
+    max-width: none;
+  }
+
+  .info-card {
+    width: 260px;
+    margin-top: 19px;
+  }
 }
