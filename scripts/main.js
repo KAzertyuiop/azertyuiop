@@ -2,6 +2,11 @@ document.documentElement.classList.add("js");
 
 const KEY_FLASHABLE = new Set(["a", "z", "e", "r", "t", "y", "u", "i", "o", "p"]);
 const keyFlashTimers = new Map();
+const EMAIL_SWEEP_SUFFIX = ["z", "e", "r", "t", "y", "u", "i", "o", "p"];
+const KEY_INTRO_DELAY = 0.2;
+const KEY_INTRO_STAGGER = 0.03;
+const KEY_INTRO_DURATION = 0.009;
+const ROLE_START_DELAY = 0.95;
 
 const ROLE_ACTION_GROUPS = [
   { delay: 4000, actions: [{ selector: ".caret-mid", value: "inline" }, { selector: ".space", value: "none" }, { selector: ".caret-end", value: "none" }] },
@@ -192,7 +197,7 @@ function buildRoleTimeline() {
 
   window.__roleInitialized = true;
   setActiveCaret(".caret-end");
-  const tl = gsap.timeline({ repeat: -1 });
+  const tl = gsap.timeline({ repeat: -1, delay: ROLE_START_DELAY });
   ROLE_ACTION_GROUPS.forEach((group) => {
     tl.to({}, { duration: group.delay / 1000 }).call(() => {
       group.actions.forEach(({ selector, value }) => {
@@ -222,6 +227,49 @@ function buildRoleTimeline() {
   });
 
   window.__roleTimeline = tl;
+}
+
+function initKeyboardIntro() {
+  if (!window.gsap || window.__keyboardIntroInitialized) return;
+
+  const keys = Array.from(document.querySelectorAll(".azerty .key"));
+  const contactValue = document.querySelector(".contact-value");
+  if (keys.length < 2) return;
+
+  window.__keyboardIntroInitialized = true;
+
+  const sweepKeys = keys.slice(1);
+  if (contactValue) {
+    contactValue.textContent = "koen@a.be";
+  }
+  gsap.set(sweepKeys, {
+    autoAlpha: 0,
+  });
+
+  const tl = gsap.timeline({ delay: KEY_INTRO_DELAY });
+
+  sweepKeys.forEach((key, index) => {
+    tl.to(
+      key,
+      {
+        autoAlpha: 1,
+        duration: KEY_INTRO_DURATION,
+        ease: "none",
+        onStart: () => {
+          const letter = key.querySelector(".key-letter")?.textContent?.trim()?.toLowerCase();
+          if (letter && KEY_FLASHABLE.has(letter)) {
+            flashKeyForSelector(`.key-${letter} .key-letter`);
+          }
+          if (contactValue && EMAIL_SWEEP_SUFFIX[index]) {
+            contactValue.textContent = `koen@a${EMAIL_SWEEP_SUFFIX.slice(0, index + 1).join("")}.be`;
+          }
+        },
+      },
+      index === 0 ? 0 : `+=${KEY_INTRO_STAGGER}`
+    );
+  });
+
+  window.__keyboardIntroTL = tl;
 }
 
 const initScribble = () => {
@@ -271,16 +319,18 @@ const initScribble = () => {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  initKeyboardIntro();
   buildRoleTimeline();
   initScribble();
 
   let attempts = 0;
   const retry = window.setInterval(() => {
     attempts += 1;
+    initKeyboardIntro();
     buildRoleTimeline();
     initScribble();
 
-    if ((window.__roleInitialized && window.__scribbleInitialized) || attempts >= 20) {
+    if ((window.__roleInitialized && window.__scribbleInitialized && window.__keyboardIntroInitialized) || attempts >= 20) {
       window.clearInterval(retry);
     }
   }, 150);
