@@ -469,6 +469,12 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   }
 
   .role-box {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .intro-complete .role-box,
+  .contact-value-intro {
     min-height: 46px;
     padding: 4px 11px;
   }
