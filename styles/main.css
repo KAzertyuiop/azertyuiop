@@ -342,10 +342,12 @@ a {
   }
 
   .azerty {
-    width: min(354px, calc(100vw - 20px));
-    max-width: none;
+    width: 354px;
+    max-width: calc(100vw - 20px);
     gap: 6px;
     margin-top: 0;
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .key {
@@ -437,8 +439,8 @@ a {
 
 @media (max-width: 479px) {
   .azerty {
-    width: min(354px, calc(100vw - 20px));
-    max-width: none;
+    width: 354px;
+    max-width: calc(100vw - 20px);
   }
 
   .info-card {
