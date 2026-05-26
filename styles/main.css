@@ -327,11 +327,13 @@ html:not(.intro-complete) .role-caret {
 .contact-value-intro .contact-caret {
   visibility: visible;
   display: inline-block;
-  margin-right: 0;
+  width: 0;
+  padding-right: 0;
+  margin-right: 4px;
 }
 
 .contact-value-intro .contact-suffix {
-  margin-left: 2px;
+  margin-left: 0;
 }
 
 .intro-complete .contact-value-intro {
