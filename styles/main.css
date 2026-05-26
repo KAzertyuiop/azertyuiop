@@ -306,6 +306,16 @@ html:not(.intro-complete) .role-caret {
   font-family: "Roboto", sans-serif;
 }
 
+.contact-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.contact-row .contact-value-intro {
+  flex: 1 1 auto;
+}
+
 .contact-value-intro {
   width: 100%;
   min-height: 46px;
@@ -356,6 +366,48 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   visibility: visible;
 }
 
+.copy-button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.10s ease, transform 0.10s ease;
+}
+
+.copy-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.intro-complete .copy-button {
+  display: inline-flex;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.copy-button:active {
+  transform: translateY(1px);
+}
+
+.copy-button.is-copied {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .button {
   display: inline-flex;
   margin-top: 28px;
@@ -369,11 +421,15 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   font-weight: 500;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.10s ease;
+  transition: background-color 0.10s ease, transform 0.10s ease;
 }
 
 .button:hover {
   background: #e6e6e6;
+}
+
+.button:active {
+  transform: translateY(1px);
 }
 
 @keyframes blink {
@@ -487,9 +543,14 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
     white-space: normal;
   }
 
-  .caret {
-    height: 2.2rem;
-    align-self: center;
+  .role-caret {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  .contact-value-intro .contact-caret {
+    width: 0;
+    margin-right: 4px;
   }
 
   .statement {
@@ -504,6 +565,15 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   .contact-value {
     font-size: 24px;
     line-height: 32px;
+  }
+
+  .contact-row {
+    gap: 10px;
+  }
+
+  .copy-button {
+    width: 32px;
+    height: 32px;
   }
 
   .button {

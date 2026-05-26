@@ -324,10 +324,55 @@ const initScribble = () => {
   window.__scribbleTL = tl;
 };
 
+async function copyEmailAddress() {
+  const email = "koen@azertyuiop.be";
+
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(email);
+    return true;
+  }
+
+  const input = document.createElement("textarea");
+  input.value = email;
+  input.setAttribute("readonly", "");
+  input.style.position = "absolute";
+  input.style.left = "-9999px";
+  document.body.appendChild(input);
+  input.select();
+  const copied = document.execCommand("copy");
+  document.body.removeChild(input);
+  return copied;
+}
+
+function initCopyButton() {
+  const button = document.querySelector(".copy-button");
+  if (!button || button.dataset.bound === "true") return;
+
+  button.dataset.bound = "true";
+  let copiedTimer;
+
+  button.addEventListener("click", async () => {
+    const copied = await copyEmailAddress().catch(() => false);
+    if (!copied) return;
+
+    button.classList.add("is-copied");
+    button.setAttribute("aria-label", "Email address copied");
+    button.setAttribute("title", "Email address copied");
+
+    window.clearTimeout(copiedTimer);
+    copiedTimer = window.setTimeout(() => {
+      button.classList.remove("is-copied");
+      button.setAttribute("aria-label", "Copy email address");
+      button.setAttribute("title", "Copy email address");
+    }, 1200);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initKeyboardIntro();
   buildRoleTimeline();
   initScribble();
+  initCopyButton();
 
   let attempts = 0;
   const retry = window.setInterval(() => {
@@ -335,6 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initKeyboardIntro();
     buildRoleTimeline();
     initScribble();
+    initCopyButton();
 
     if ((window.__roleInitialized && window.__scribbleInitialized && window.__keyboardIntroInitialized) || attempts >= 20) {
       window.clearInterval(retry);
