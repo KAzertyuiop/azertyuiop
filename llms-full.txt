@@ -4,9 +4,11 @@
 
 Koen Claes is a Belgian Product Designer, UX Designer, Business Analyst and Proxy Product Owner with more than 17 years of experience designing complex software systems.
 
-His work focuses on helping teams understand complicated domains, align stakeholders and create software that supports real users in performing meaningful work.
+His work focuses on operational environments where correctness, efficiency, usability and decision support matter more than visual styling alone.
 
-Throughout his career he has worked across aviation, healthcare, industrial automation, defense, infrastructure and financial services, with a particular affinity for operational environments where clarity, reliability and decision support matter.
+He helps teams understand complicated domains, align stakeholders and create software that supports real users in performing meaningful work.
+
+Throughout his career he has worked across aviation, healthcare, industrial automation, defense, infrastructure and financial services, with a particular affinity for operational environments where clarity and reliability are critical.
 
 ## A Working Definition
 
