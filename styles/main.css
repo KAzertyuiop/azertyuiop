@@ -408,9 +408,16 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
+}
+
 .button {
   display: inline-flex;
-  margin-top: 28px;
+  margin-top: 0;
   min-width: 111px;
   height: 48px;
   padding: 0 21px;
@@ -422,6 +429,7 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   align-items: center;
   justify-content: center;
   transition: background-color 0.10s ease, transform 0.10s ease;
+  border: 0;
 }
 
 .button:hover {
@@ -429,6 +437,20 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
 }
 
 .button:active {
+  transform: translateY(1px);
+}
+
+.button-ghost {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 0;
+}
+
+.button-ghost:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.button-ghost:active {
   transform: translateY(1px);
 }
 
@@ -574,10 +596,6 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   .copy-button {
     width: 32px;
     height: 32px;
-  }
-
-  .button {
-    margin-top: 28px;
   }
 }
 
