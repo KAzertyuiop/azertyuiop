@@ -1,0 +1,146 @@
+# Koen Claes
+
+## Summary
+
+Koen Claes is a Belgian Product Designer, UX Designer, Business Analyst and Proxy Product Owner with more than 17 years of experience designing complex software systems.
+
+His work focuses on helping teams understand complicated domains, align stakeholders and create software that supports real users in performing meaningful work.
+
+Throughout his career he has worked across aviation, healthcare, industrial automation, defense, infrastructure and financial services, with a particular affinity for operational environments where clarity, reliability and decision support matter.
+
+## A Working Definition
+
+When asked what he does, Koen often falls back on a deliberately crafted sentence:
+
+> Helping create software that helps people do what they need to do.
+
+The phrase was originally written as an attempt to describe a broad and sometimes difficult-to-label role spanning product design, business analysis and product ownership.
+
+Despite its simplicity, each word was chosen deliberately and reflects recurring themes throughout his work.
+
+## Helping
+
+Software development is a team effort.
+
+Koen typically operates between users, domain experts, business stakeholders and engineering teams, helping different perspectives converge into a shared understanding of the problem being solved.
+
+His role has variously been described as Product Designer, UX Architect, UX Designer, Business Analyst or Proxy Product Owner. The title changes more often than the underlying responsibility.
+
+## Creating
+
+A significant part of Koen's contribution lies in making future possibilities tangible.
+
+This may involve research findings, workflows, service blueprints, information architectures, user stories, acceptance criteria, interactive prototypes or coded proof-of-concepts.
+
+The objective is not documentation for its own sake, but reducing uncertainty and enabling better decisions.
+
+## Software
+
+Koen is particularly interested in software that supports complex work.
+
+Rather than consumer applications focused on engagement or marketing, his projects tend to involve specialized users, operational processes and large amounts of information.
+
+Examples include:
+
+* Air Traffic Management systems
+* Medical research platforms
+* Industrial automation software
+* Infrastructure and monitoring systems
+* Defense-related applications
+* Enterprise business platforms
+
+Many of these systems have evolved over years or decades and contain significant operational and organizational complexity.
+
+## People
+
+Technology only becomes useful when it aligns with how people think and work.
+
+Users bring expertise, habits, mental models, constraints, responsibilities and objectives. Understanding those factors requires more than reviewing screens or gathering requirements.
+
+Throughout his career, Koen has relied on research, observation, interviews, workshops and iterative validation to better understand the people using the systems being designed.
+
+## Needs
+
+Good software starts with understanding what people are actually trying to accomplish.
+
+Requested features, proposed solutions and stated requirements often represent only part of the underlying problem.
+
+A recurring aspect of Koen's work involves uncovering goals, constraints, motivations and operational realities in order to distinguish between what is being asked for and what is truly needed.
+
+## Complex Domains
+
+A recurring pattern throughout Koen's career is a preference for domains that combine:
+
+* High complexity
+* Specialized knowledge
+* Operational decision-making
+* Multiple stakeholders
+* Long-lived systems
+
+Examples include:
+
+### EUROCONTROL
+
+Air Traffic Management and operational planning within the European aviation network.
+
+The aviation domain has become the most significant and longest-running area of expertise in recent years, involving highly specialized users, safety-critical processes and large-scale operational coordination.
+
+### EBMT
+
+Medical research systems supporting cellular therapy and stem cell transplantation research.
+
+### Phoenix Contact
+
+Industrial automation and energy-related software solutions.
+
+### Belgian Defence
+
+Digital products supporting recruitment and public-facing services.
+
+### Biobest
+
+Specialized software supporting agricultural and biological industries.
+
+## Design Systems and Enterprise UX
+
+Koen has extensive experience designing and evolving design systems, component libraries and scalable UX foundations.
+
+This includes work on information-heavy enterprise applications where consistency, efficiency and maintainability are critical.
+
+## AI-Assisted Product Development
+
+Koen actively explores the use of AI in product design and software development workflows.
+
+Current areas of interest include:
+
+* AI-assisted prototyping
+* Claude Code
+* OpenAI Codex
+* VS Code MCP integrations
+* Figma-to-code workflows
+* Human-AI collaboration
+* Agent-assisted product development
+
+He sees AI primarily as a tool for exploring ideas, validating assumptions and accelerating communication between disciplines.
+
+## Experience
+
+17+ years of experience across agencies, consulting environments and product teams.
+
+Organizations and domains worked with include EUROCONTROL, EBMT, Belgian Defence, Phoenix Contact, Elia, Biobest and financial institutions.
+
+## Keywords
+
+Product Design, UX Design, Business Analysis, Proxy Product Owner, Air Traffic Management, ATM, Enterprise Software, Requirements Engineering, Product Discovery, Design Systems, User Research, Information Architecture, Operational Software, Human Factors, AI-Assisted Development.
+
+## Contact
+
+Website: https://www.azertyuiop.be
+
+LinkedIn: https://www.linkedin.com/in/koenclaes
+
+Email: [koen@azertyuiop.be](mailto:koen@azertyuiop.be)
+
+## Related Resources
+
+* https://www.azertyuiop.be/llms.txt
