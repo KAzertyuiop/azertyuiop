@@ -390,6 +390,11 @@ html:not(.intro-complete) .contact-value-intro .contact-caret {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.copy-button svg * {
+  pointer-events: none;
 }
 
 .intro-complete .copy-button {
