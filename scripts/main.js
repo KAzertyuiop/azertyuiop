@@ -344,6 +344,11 @@ async function copyEmailAddress() {
   return copied;
 }
 
+function capturePosthogEvent(eventName, properties = {}) {
+  if (!window.posthog || typeof window.posthog.capture !== "function") return;
+  window.posthog.capture(eventName, properties);
+}
+
 function initCopyButton() {
   const button = document.querySelector(".copy-button");
   if (!button || button.dataset.bound === "true") return;
@@ -354,6 +359,11 @@ function initCopyButton() {
   button.addEventListener("click", async () => {
     const copied = await copyEmailAddress().catch(() => false);
     if (!copied) return;
+
+    capturePosthogEvent("email_copy_clicked", {
+      location: "contact",
+      target: "copy_button",
+    });
 
     button.classList.add("is-copied");
     button.setAttribute("aria-label", "Email address copied");
@@ -368,11 +378,28 @@ function initCopyButton() {
   });
 }
 
+function initAnalyticsTracking() {
+  const trackedLinks = document.querySelectorAll("[data-posthog-event]");
+
+  trackedLinks.forEach((link) => {
+    if (link.dataset.analyticsBound === "true") return;
+
+    link.dataset.analyticsBound = "true";
+    link.addEventListener("click", () => {
+      capturePosthogEvent(link.dataset.posthogEvent, {
+        href: link.getAttribute("href"),
+        label: link.textContent?.trim(),
+      });
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initKeyboardIntro();
   buildRoleTimeline();
   initScribble();
   initCopyButton();
+  initAnalyticsTracking();
 
   let attempts = 0;
   const retry = window.setInterval(() => {
@@ -381,6 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buildRoleTimeline();
     initScribble();
     initCopyButton();
+    initAnalyticsTracking();
 
     if ((window.__roleInitialized && window.__scribbleInitialized && window.__keyboardIntroInitialized) || attempts >= 20) {
       window.clearInterval(retry);
