@@ -27,6 +27,8 @@
     posthog.init('phc_B3QJvfpKcFsB7AgwZ3DRRDV3K3fSVrjfGegVrzk6hV9h', {
       api_host: 'https://eu.i.posthog.com',
       defaults: '2026-05-30',
+      autocapture: false,
+      cookieless_mode: 'always',
       person_profiles: 'identified_only'
     });
   </script>
@@ -104,7 +106,7 @@
             <div class="label">Contact</div>
             <div class="contact-row">
               <p class="contact-value contact-value-intro"><span class="contact-prefix">koen@</span><span class="contact-domain">azertyuiop</span><span class="contact-caret role-caret is-active">|</span><span class="contact-suffix">.be</span></p>
-              <button class="copy-button" type="button" aria-label="Copy email address" title="Copy email address">
+              <button class="copy-button" type="button" aria-label="Copy email address" title="Copy email address" data-posthog-event="email_copy_clicked">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <rect x="10" y="4.5" width="9.5" height="9.5" rx="2.5" ry="2.5"/>
                   <path d="M8 7.5H7.5A2.5 2.5 0 0 0 5 10v6.5A2.5 2.5 0 0 0 7.5 19H14a2.5 2.5 0 0 0 2.5-2.5V16"/>

@@ -360,7 +360,7 @@ function initCopyButton() {
     const copied = await copyEmailAddress().catch(() => false);
     if (!copied) return;
 
-    capturePosthogEvent("email_copy_clicked", {
+    capturePosthogEvent(button.dataset.posthogEvent || "email_copy_clicked", {
       location: "contact",
       target: "copy_button",
     });
