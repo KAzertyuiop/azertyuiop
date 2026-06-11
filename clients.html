@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZERTYUIOP Clients Mosaic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .sort-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .sort-btn:hover {
+            background: #252525;
+            border-color: #555;
+        }
+
+        .sort-btn.active {
+            background: #fff;
+            color: #0a0a0a;
+            border-color: #fff;
+        }
+
+        #treemap {
+            overflow: hidden;
+        }
+
+        .cell {
+            stroke: #0a0a0a;
+            stroke-width: 2;
+            cursor: pointer;
+            transition: opacity 0.2s ease, fill 0.2s ease;
+            fill: #1a1a1a;
+        }
+
+        .cell:hover {
+            opacity: 0.7;
+            fill: #252525 !important;
+        }
+
+        .cell-label {
+            font-size: 11px;
+            font-weight: 500;
+            fill: white;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .cell-label.large {
+            font-size: 22px;
+        }
+
+        .cell-label.mini {
+            font-size: 6px;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            border-radius: 8px;
+            pointer-events: none;
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 250px;
+        }
+
+        .tooltip .client-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin: 0 0 4px 0;
+        }
+
+        .tooltip .client-sector {
+            font-size: 12px;
+            color: #999;
+            margin: 0;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .sort-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .cell-label {
+                font-size: 9px;
+            }
+
+            .cell-label.large {
+                font-size: 16px;
+            }
+
+            .cell-label.mini {
+                font-size: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <button class="sort-btn active" data-sort="random">Random</button>
+            <button class="sort-btn" data-sort="alphabetical">Alphabetical</button>
+            <button class="sort-btn" data-sort="size">By Size</button>
+        </div>
+
+        <div id="treemap"></div>
+        <div class="tooltip"></div>
+    </div>
+
+    <script>
+        // Responsive dimensions based on viewport
+        function getViewportDimensions() {
+            const isMobile = window.innerWidth <= 991;
+            if (isMobile) {
+                // Portrait mobile viewport with very tall scrollable height
+                const viewportWidth = window.innerWidth - 20; // Account for padding
+                const viewportHeight = window.innerHeight * 8; // 8x viewport height for maximum horizontal box layout
+                return { width: viewportWidth, height: viewportHeight };
+            } else {
+                // Desktop
+                return { width: 1400, height: 800 };
+            }
+        }
+
+        let { width, height } = getViewportDimensions();
+
+        // Inline flat data - shuffled for true mosaic effect
+        const data = {"name":"AZERTYUIOP Clients","children":[{"name":"Krauthammer","value":20,"period":"filtered-out","yearsBack":15,"sector":"Training & Development"},{"name":"Fortis","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"European Union","value":20,"period":"filtered-out","yearsBack":15,"sector":"Government"},{"name":"Cora","value":20,"period":"filtered-out","yearsBack":15,"sector":"Retail"},{"name":"Delta Lloyd Life","value":20,"period":"filtered-out","yearsBack":15,"sector":"Insurance"},{"name":"AGC","value":20,"period":"filtered-out","yearsBack":15,"sector":"Glass & Materials"},{"name":"GBL","value":20,"period":"filtered-out","yearsBack":15,"sector":"Investment"},{"name":"Dermalex","value":40,"period":"era10y","yearsBack":10,"sector":"Pharma & Healthcare"},{"name":"Solvay","value":40,"period":"era10y","yearsBack":10,"sector":"Chemicals"},{"name":"Eurocontrol","value":100,"period":"current","yearsBack":0,"sector":"Aviation"},{"name":"Europ Assistance","value":20,"period":"filtered-out","yearsBack":15,"sector":"Insurance"},{"name":"Forum Nucléaire","value":20,"period":"filtered-out","yearsBack":15,"sector":"Energy"},{"name":"NileDutch","value":20,"period":"filtered-out","yearsBack":15,"sector":"Aviation"},{"name":"Livenation","value":80,"period":"era2y","yearsBack":2,"sector":"Entertainment"},{"name":"Leffe","value":20,"period":"filtered-out","yearsBack":15,"sector":"Food & Beverage"},{"name":"Verhelst","value":20,"period":"filtered-out","yearsBack":15,"sector":"Logistics"},{"name":"iDBus","value":20,"period":"filtered-out","yearsBack":15,"sector":"Transportation"},{"name":"Nationale Loterij","value":20,"period":"filtered-out","yearsBack":15,"sector":"Gaming"},{"name":"Interpolis","value":60,"period":"era5y","yearsBack":5,"sector":"Insurance"},{"name":"STIB / MIVB","value":20,"period":"filtered-out","yearsBack":15,"sector":"Transportation"},{"name":"Jaga","value":20,"period":"filtered-out","yearsBack":15,"sector":"HVAC & Building"},{"name":"Microsoft","value":20,"period":"filtered-out","yearsBack":15,"sector":"Technology"},{"name":"Arval Private Lease","value":60,"period":"era5y","yearsBack":5,"sector":"Automotive"},{"name":"SKM","value":40,"period":"era10y","yearsBack":10,"sector":"Consulting"},{"name":"Brussels Airlines","value":20,"period":"filtered-out","yearsBack":15,"sector":"Aviation"},{"name":"Dexia","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Orange","value":20,"period":"filtered-out","yearsBack":15,"sector":"Telecom"},{"name":"UCB","value":20,"period":"filtered-out","yearsBack":15,"sector":"Pharma & Healthcare"},{"name":"Flanders DC","value":60,"period":"era5y","yearsBack":5,"sector":"Government"},{"name":"Phoenix Contact","value":80,"period":"era2y","yearsBack":2,"sector":"Industrial Automation"},{"name":"Deceuninck","value":20,"period":"filtered-out","yearsBack":15,"sector":"Building Materials"},{"name":"Visit Antwerpen","value":60,"period":"era5y","yearsBack":5,"sector":"Tourism"},{"name":"Samsung","value":20,"period":"filtered-out","yearsBack":15,"sector":"Technology"},{"name":"Thomas Cook","value":20,"period":"filtered-out","yearsBack":15,"sector":"Travel"},{"name":"Delhaize","value":40,"period":"era10y","yearsBack":10,"sector":"Retail"},{"name":"NATO","fullName":"North Atlantic Treaty Organization","value":40,"period":"era10y","yearsBack":10,"sector":"Defense"},{"name":"Generali","value":20,"period":"filtered-out","yearsBack":15,"sector":"Insurance"},{"name":"Sporty vzw","value":40,"period":"era10y","yearsBack":10,"sector":"Sports"},{"name":"Seton","value":20,"period":"filtered-out","yearsBack":15,"sector":"Safety & Signage"},{"name":"SAIC (MG)","value":40,"period":"era10y","yearsBack":10,"sector":"Automotive"},{"name":"Ansell","value":20,"period":"filtered-out","yearsBack":15,"sector":"Safety Equipment"},{"name":"Rail Europe","value":20,"period":"filtered-out","yearsBack":15,"sector":"Transportation"},{"name":"SBS","value":20,"period":"filtered-out","yearsBack":15,"sector":"Media"},{"name":"Achmea Rechtsbijstand","value":60,"period":"era5y","yearsBack":5,"sector":"Legal Insurance"},{"name":"Deutsche Bank","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Crefius","value":60,"period":"era5y","yearsBack":5,"sector":"Financial Services"},{"name":"Argenta","value":60,"period":"era5y","yearsBack":5,"sector":"Banking"},{"name":"Evi (van Lanschot)","value":40,"period":"era10y","yearsBack":10,"sector":"Banking"},{"name":"AXA Bank","value":40,"period":"era10y","yearsBack":10,"sector":"Banking"},{"name":"Kluwer","value":20,"period":"filtered-out","yearsBack":15,"sector":"Publishing"},{"name":"Belgacom / Proximus","value":20,"period":"filtered-out","yearsBack":15,"sector":"Telecom"},{"name":"Toyota","value":20,"period":"filtered-out","yearsBack":15,"sector":"Automotive"},{"name":"Acco","value":40,"period":"era10y","yearsBack":10,"sector":"Travel & Tourism"},{"name":"Defensie / La défense","value":60,"period":"era5y","yearsBack":5,"sector":"Defense"},{"name":"Petercam","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Henkel","value":20,"period":"filtered-out","yearsBack":15,"sector":"Consumer Goods"},{"name":"Primagaz","value":40,"period":"era10y","yearsBack":10,"sector":"Energy"},{"name":"BPost","value":20,"period":"filtered-out","yearsBack":15,"sector":"Logistics"},{"name":"Audi","value":20,"period":"filtered-out","yearsBack":15,"sector":"Automotive"},{"name":"Vlaamse Stichting Verkeerskunde","value":20,"period":"filtered-out","yearsBack":15,"sector":"Traffic & Mobility"},{"name":"Ergo","value":20,"period":"filtered-out","yearsBack":15,"sector":"Insurance"},{"name":"Omega Pharma (Perrigo)","value":40,"period":"era10y","yearsBack":10,"sector":"Pharma & Healthcare"},{"name":"EBMT","fullName":"European Society for Blood and Marrow Transplantation","value":80,"period":"era2y","yearsBack":2,"sector":"Healthcare"},{"name":"Moneyou","value":40,"period":"era10y","yearsBack":10,"sector":"Banking"},{"name":"BNP Paribas","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Elia","value":60,"period":"era5y","yearsBack":5,"sector":"Energy"},{"name":"Pioneer","value":40,"period":"era10y","yearsBack":10,"sector":"Electronics"},{"name":"Agiris","value":20,"period":"filtered-out","yearsBack":15,"sector":"HR & Social Services"},{"name":"Biobest Group","value":60,"period":"era5y","yearsBack":5,"sector":"Agriculture"},{"name":"RBFA","fullName":"Royal Belgian Football Association","value":80,"period":"era2y","yearsBack":2,"sector":"Sports"},{"name":"Korongo Airlines","value":20,"period":"filtered-out","yearsBack":15,"sector":"Aviation"},{"name":"Stella McCartney","value":20,"period":"filtered-out","yearsBack":15,"sector":"Fashion"},{"name":"BASE","value":20,"period":"filtered-out","yearsBack":15,"sector":"Telecom"},{"name":"Truvo (Golden Pages)","value":20,"period":"filtered-out","yearsBack":15,"sector":"Publishing"},{"name":"ACV / CSC","value":20,"period":"filtered-out","yearsBack":15,"sector":"Labor Union"},{"name":"Electrabel","value":20,"period":"filtered-out","yearsBack":15,"sector":"Energy"},{"name":"Pfizer","value":20,"period":"filtered-out","yearsBack":15,"sector":"Pharma & Healthcare"},{"name":"BNP Paribas Fortis","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Immotheker Finotheker","value":40,"period":"era10y","yearsBack":10,"sector":"Financial Services"},{"name":"SESAR Deployment Manager","value":60,"period":"era5y","yearsBack":5,"sector":"Aviation"},{"name":"Lhoist","value":20,"period":"filtered-out","yearsBack":15,"sector":"Mining & Materials"},{"name":"Test Aankoop (Euroconsumers)","value":40,"period":"era10y","yearsBack":10,"sector":"Consumer Protection"},{"name":"D'Ieteren","value":20,"period":"filtered-out","yearsBack":15,"sector":"Automotive"},{"name":"ING","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"Landbouwkrediet","value":20,"period":"filtered-out","yearsBack":15,"sector":"Banking"},{"name":"SD Worx","value":80,"period":"era2y","yearsBack":2,"sector":"HR & Payroll"},{"name":"Nutricia","value":20,"period":"filtered-out","yearsBack":15,"sector":"Food & Beverage"},{"name":"StoraEnso","value":20,"period":"filtered-out","yearsBack":15,"sector":"Paper & Packaging"},{"name":"Essent","value":60,"period":"era5y","yearsBack":5,"sector":"Energy"},{"name":"DVV","value":20,"period":"filtered-out","yearsBack":15,"sector":"Insurance"},{"name":"Autogids","value":20,"period":"filtered-out","yearsBack":15,"sector":"Automotive Media"},{"name":"Keytrade","value":60,"period":"era5y","yearsBack":5,"sector":"Banking"},{"name":"Paranix","value":40,"period":"era10y","yearsBack":10,"sector":"Pharma & Healthcare"},{"name":"Pages Jaunes","value":20,"period":"filtered-out","yearsBack":15,"sector":"Publishing"},{"name":"Federal Mogul","value":20,"period":"filtered-out","yearsBack":15,"sector":"Automotive"},{"name":"Verhelst Foundation (AB InBev)","value":60,"period":"era5y","yearsBack":5,"sector":"Philanthropy"},{"name":"CERT","fullName":"Computer Emergency Response Team","value":40,"period":"era10y","yearsBack":10,"sector":"Cybersecurity"},{"name":"Puratos","value":20,"period":"filtered-out","yearsBack":15,"sector":"Food Ingredients"},{"name":"Flying Services","value":60,"period":"era5y","yearsBack":5,"sector":"Hospitality & Catering"},{"name":"Iglo / Birds Eye / Findus","value":60,"period":"era5y","yearsBack":5,"sector":"Food & Beverage"},{"name":"Telindus","value":20,"period":"filtered-out","yearsBack":15,"sector":"Technology"},{"name":"Belfius","value":40,"period":"era10y","yearsBack":10,"sector":"Banking"},{"name":"Unilever","value":40,"period":"era10y","yearsBack":10,"sector":"Consumer Goods"},{"name":"Estée Lauder","value":20,"period":"filtered-out","yearsBack":15,"sector":"Cosmetics"}]};
+
+        // Store original data for sorting
+        const originalData = JSON.parse(JSON.stringify(data));
+        let currentSort = 'random';
+
+        // Create SVG
+        const svg = d3.select("#treemap")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", [0, 0, width, height])
+            .attr("style", "max-width: 100%; height: auto;");
+
+        // Tooltip
+        const tooltip = d3.select(".tooltip");
+
+        // Apply custom sizes to clients
+        function applyCustomSizes(clients) {
+            // Custom size mapping
+            const sizeMap = {
+                // Size 1200
+                'Eurocontrol': 1200,
+
+                // Size 800
+                'EBMT': 800,
+                'Phoenix Contact': 800,
+                'Biobest Group': 800,
+
+                // Size 200
+                'Livenation': 200,
+                'Defensie / La défense': 200,
+
+                // Size 120
+                'Arval Private Lease': 120,
+                'Elia': 120,
+                'Flying Services': 120,
+                'Interpolis': 120,
+                'SD Worx': 120,
+
+                // Size 80
+                'Achmea Rechtsbijstand': 80,
+                'Argenta': 80,
+                'Crefius': 80,
+                'Essent': 80,
+                'Flanders DC': 80,
+                'Iglo / Birds Eye / Findus': 80,
+                'Keytrade': 80,
+                'RBFA': 80,
+                'SESAR Deployment Manager': 80,
+                'Verhelst Foundation (AB InBev)': 80,
+                'Visit Antwerpen': 80
+            };
+
+            // Mini clients (Size 25)
+            const miniClients = ['SAIC (MG)', 'UCB', 'Cora', 'SBS', 'Autogids', 'Estée Lauder', 'StoraEnso', 'Toyota', 'NileDutch', 'iDBus', 'Nationale Loterij', 'Microsoft', 'Seton', 'Evi (van Lanschot)', 'Landbouwkrediet', 'Ergo', 'Samsung', 'Europ Assistance', 'Federal Mogul', 'Henkel', 'Krauthammer', 'Leffe', 'Petercam', 'Rail Europe', 'Stella McCartney', 'STIB / MIVB', 'Telindus', 'Thomas Cook', 'Verhelst'];
+
+            // Size 40 clients
+            const size40Clients = ['Puratos'];
+
+            return clients.map(client => {
+                let newValue;
+                let isMini = false;
+                let isLarge = false;
+
+                // Check if client has custom size
+                if (sizeMap[client.name]) {
+                    newValue = sizeMap[client.name];
+                    if (newValue >= 800) {
+                        isLarge = true;
+                    }
+                }
+                // Mini clients
+                else if (miniClients.includes(client.name)) {
+                    newValue = 25;
+                    isMini = true;
+                }
+                // Specific size 40 clients
+                else if (size40Clients.includes(client.name)) {
+                    newValue = 40;
+                }
+                // Default sizes
+                else if (client.value >= 60) {
+                    newValue = 80;
+                } else {
+                    newValue = 40;
+                }
+
+                return {
+                    ...client,
+                    value: newValue,
+                    originalValue: client.value,
+                    isMini: isMini,
+                    isLarge: isLarge
+                };
+            });
+        }
+
+        function renderTreemap(sortType) {
+            // Update dimensions in case of resize
+            const dims = getViewportDimensions();
+            width = dims.width;
+            height = dims.height;
+
+            // Clear existing
+            svg.selectAll("*").remove();
+
+            // Update SVG dimensions
+            svg.attr("width", width)
+               .attr("height", height)
+               .attr("viewBox", [0, 0, width, height]);
+
+            // Sort data based on type
+            let sortedData = JSON.parse(JSON.stringify(originalData));
+
+            // Apply custom sizes
+            sortedData.children = applyCustomSizes(sortedData.children);
+
+            // NOW sort after custom sizes are applied
+            if (sortType === 'alphabetical') {
+                sortedData.children.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortType === 'size') {
+                sortedData.children.sort((a, b) => b.value - a.value);  // Sort by NEW value, biggest first
+            }
+            // 'random' keeps the shuffled order from originalData
+
+            // Create hierarchy - completely flat
+            const root = d3.hierarchy(sortedData)
+                .sum(d => d.value);
+
+            // Use squarify with low ratio for wide boxes that can still group small ones
+            const isMobile = window.innerWidth <= 991;
+            const tileRatio = isMobile ? 0.3 : 1.5;  // Lower ratio = wider boxes, allows small ones to pair up
+
+            // Create treemap layout
+            d3.treemap()
+                .size([width, height])
+                .padding(2)
+                .paddingTop(2)
+                .round(true)
+                .tile(d3.treemapSquarify.ratio(tileRatio))
+                (root);
+
+            // Create groups for each cell (only leaf nodes)
+            const cell = svg.selectAll("g")
+                .data(root.leaves())
+                .join("g")
+                .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+            // Add rectangles with subtle color variation based on size
+            cell.append("rect")
+                .attr("class", "cell")
+                .attr("width", d => d.x1 - d.x0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("rx", 4)
+                .style("fill", d => {
+                    // Use originalValue for color if it exists, otherwise use value
+                    const val = d.data.originalValue || d.data.value;
+                    const brightness = 20 + (val / 100) * 15;
+                    return `rgb(${brightness}, ${brightness}, ${brightness})`;
+                })
+                .on("mouseover", function(event, d) {
+                    // Highlight cell
+                    d3.select(this).style("opacity", 0.8);
+
+                    // Show tooltip with name (or fullName) and sector
+                    const displayName = d.data.fullName || d.data.name;
+                    tooltip
+                        .style("opacity", 1)
+                        .html(`<div class="client-name">${displayName}</div><div class="client-sector">${d.data.sector || ''}</div>`);
+                })
+                .on("mousemove", function(event) {
+                    // Position tooltip near cursor
+                    tooltip
+                        .style("left", (event.pageX + 15) + "px")
+                        .style("top", (event.pageY - 15) + "px");
+                })
+                .on("mouseleave", function() {
+                    // Reset cell
+                    d3.select(this).style("opacity", 1);
+
+                    // Hide tooltip
+                    tooltip.style("opacity", 0);
+                })
+                .on("click", (event, d) => {
+                    console.log(`Client: ${d.data.name}`, d.data);
+                });
+
+            // Add labels
+            cell.append("text")
+                .attr("class", d => {
+                    if (d.data.isLarge) return "cell-label large";
+                    if (d.data.isMini) return "cell-label mini";
+                    return "cell-label";
+                })
+                .attr("x", 6)
+                .attr("y", d => {
+                    if (d.data.isLarge) return 26;
+                    if (d.data.isMini) return 12;
+                    return 16;
+                })
+                .text(d => {
+                    const width = d.x1 - d.x0;
+                    const height = d.y1 - d.y0;
+
+                    // Estimate text width (rough approximation)
+                    const estimatedTextWidth = d.data.name.length * (d.data.isMini ? 5 : 7);
+
+                    // Only show if box is wide enough for the text OR tall enough for wrapping
+                    const minWidth = d.data.isMini ? 45 : 80;
+                    const minHeight = d.data.isMini ? 15 : 25;
+
+                    // Hide label if box is too narrow AND too short
+                    if (width < minWidth && height < minHeight * 2) {
+                        return '';
+                    }
+
+                    return d.data.name;
+                })
+                .call(wrap);
+        }
+
+        // Text wrapping function
+        function wrap(text) {
+            text.each(function() {
+                const text = d3.select(this);
+                const d = text.datum();
+                const width = d.x1 - d.x0 - 12;
+                const height = d.y1 - d.y0;
+                const words = d.data.name.split(/\s+/).reverse();
+                const isMini = d.data.isMini;
+                const fontSize = isMini ? 8 : 11;
+                let word;
+                let line = [];
+                let lineNumber = 0;
+                const lineHeight = 1.2;
+                const y = text.attr("y");
+                const x = text.attr("x");
+                const maxLines = isMini ? 2 : 3;
+                let tspan = text.text(null)
+                    .append("tspan")
+                    .attr("x", x)
+                    .attr("y", y);
+
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    const textLength = tspan.node().getComputedTextLength();
+
+                    if (textLength > width && line.length > 1) {
+                        line.pop();
+                        tspan.text(line.join(" "));
+                        line = [word];
+
+                        // Stop if we've reached max lines or run out of vertical space
+                        if (lineNumber >= maxLines - 1 || (lineNumber + 1) * lineHeight * fontSize > height - 10) {
+                            // Don't show ellipsis if it would make text uglier
+                            break;
+                        }
+
+                        tspan = text.append("tspan")
+                            .attr("x", x)
+                            .attr("y", y)
+                            .attr("dy", ++lineNumber * lineHeight + "em")
+                            .text(word);
+                    }
+                }
+            });
+        }
+
+        // Sort button handlers
+        d3.selectAll(".sort-btn").on("click", function() {
+            const sortType = this.dataset.sort;
+
+            // Update active state
+            d3.selectAll(".sort-btn").classed("active", false);
+            d3.select(this).classed("active", true);
+
+            // Re-render with new sort
+            currentSort = sortType;
+            renderTreemap(sortType);
+        });
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                renderTreemap(currentSort);
+            }, 250);
+        });
+
+        // Initial render
+        renderTreemap('random');
+    </script>
+</body>
+</html>
